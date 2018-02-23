@@ -2,5 +2,5 @@
 	path = ros/src/msgs/platform_automation_msgs
 	url = https://github.com/astuff/platform_automation_msgs.git
 [submodule "ros/src/obstacle_detector"]
-	path = ros/src/obsstacle_detector
+	path = ros/src/obstacle_detector
 	url = https://github.com/tysik/obstacle_detector.git

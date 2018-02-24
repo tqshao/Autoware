@@ -4,4 +4,4 @@
 
 [submodule "ros/src/obstacle_detector"]
 	path = ros/src/obstacle_detector
-	url = https://github.com/tysik/obstacle_detector
+	url = https://github.com/tqshao/obstacle_detector.git

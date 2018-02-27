@@ -26,6 +26,11 @@ buttons:
     gui :
       flags : [ kill_children ]
 
+  chrono :
+    run : devel/lib/ros_chrono/hmmwv_model
+    gui :
+      flags : [ kill_children ]
+
 params :
   - name  : rosbag_play
     no_save_vars : [ clock, sim_time ]

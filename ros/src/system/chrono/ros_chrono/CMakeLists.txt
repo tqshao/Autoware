@@ -117,8 +117,10 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES ros_chrono
    CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
-#   DEPENDS system_lib Chrono
+   # DEPENDS traj_gen
 )
+
+
 
 ###########
 ## Build ##
@@ -164,6 +166,9 @@ MESSAGE(STATUS "...add hmmwv_model")
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/ros_chrono_node.cpp)
 add_executable(hmmwv_model src/hmmwv_model.cpp)
+
+# T.Q. Add dependencies
+add_dependencies(hmmwv_model ${catkin_EXPORTED_TARGETS})
 
 #--------------------------------------------------------------
 # Set properties for your executable target

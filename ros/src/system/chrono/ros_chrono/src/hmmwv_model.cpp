@@ -41,6 +41,8 @@
 #include <math.h>
 #include "chrono_models/vehicle/hmmwv/HMMWV.h"
 
+
+
 #define PI 3.1415926535
 //using veh_status.msg
 using namespace chrono;
@@ -277,12 +279,11 @@ int main(int argc, char* argv[]) {
 
 
     GetLog() << "Copyright (c) 2017 projectchrono.org\nChrono version: " << CHRONO_VERSION << "\n\n";
-
     SetChronoDataPath(CHRONO_DATA_DIR);
     vehicle::SetDataPath("opt/chrono/chrono/data/vehicle");
+
     // std::cout << GetChronoDataPath() << "\n"; check path of chrono data folder
     // Initialize ROS Chrono node and set node handle to n
-
     ros::init(argc, argv, "Chronode");
     ros::NodeHandle n;
     ros::Publisher vehicleinfo_pub = n.advertise<ros_chrono_msgs::veh_status>("vehicleinfo", 1);
@@ -323,8 +324,6 @@ int main(int argc, char* argv[]) {
     // ----------------------
     // Create the Bezier path
     // ----------------------
-
-
     auto path = ChBezierCurve::read(path_file);
 //  auto path = ChBezierCurve::read(chrono::vehicle::GetDataFile(path_file));
 //z= 0.1;
@@ -337,7 +336,6 @@ int main(int argc, char* argv[]) {
 
     ChVehicleIrrApp app(&my_hmmwv.GetVehicle(), &my_hmmwv.GetPowertrain(), L"Steering Controller Demo",
                         irr::core::dimension2d<irr::u32>(800, 640));
-
     app.SetHUDLocation(500, 20);
     app.SetSkyBox();
     app.AddTypicalLogo();
@@ -349,7 +347,6 @@ int main(int argc, char* argv[]) {
     app.SetChaseCamera(trackPoint, 6.0, 0.5);
 
     app.SetTimestep(step_size);
-
     // Visualization of controller points (sentinel & target)
     irr::scene::IMeshSceneNode* ballS = app.GetSceneManager()->addSphereSceneNode(0.1f);
     irr::scene::IMeshSceneNode* ballT = app.GetSceneManager()->addSphereSceneNode(0.1f);
@@ -363,7 +360,6 @@ int main(int argc, char* argv[]) {
     // Create both a GUI driver and a path-follower and allow switching between them
     ChIrrGuiDriver driver_gui(app);
     driver_gui.Initialize();
-
     /*
     ChPathFollowerDriver driver_follower(my_hmmwv.GetVehicle(), path, "my_path", target_speed);
     driver_follower.GetSteeringController().SetLookAheadDistance(5);
@@ -374,7 +370,6 @@ int main(int argc, char* argv[]) {
     ChPathFollowerDriver driver_follower(my_hmmwv.GetVehicle(), steering_controller_file,
                                          speed_controller_file, path, "my_path", target_speed);
     driver_follower.Initialize();
-
     // Create and register a custom Irrlicht event receiver to allow selecting the
     // current driver model.
     ChDriverSelector selector(my_hmmwv.GetVehicle(), &driver_follower, &driver_gui);
@@ -418,7 +413,6 @@ int main(int argc, char* argv[]) {
     // ---------------
     // Simulation loop
     // ---------------
-
     // Driver location in vehicle local frame
     ChVector<> driver_pos = my_hmmwv.GetChassis()->GetLocalDriverCoordsys().pos;
     // Number of simulation steps between miscellaneous events
@@ -440,6 +434,8 @@ int main(int argc, char* argv[]) {
     std::ofstream myfile1;
     myfile1.open(data_path+"position.txt",std::ofstream::out | std::ofstream::trunc);
 
+
+
     while (app.GetDevice()->run()) {
         // Extract system state
         ros::Subscriber sub = n.subscribe<traj_gen::Control>("/mavs/optimal_control", 10, boost::bind(controlCallback, _1, boost::ref(my_hmmwv),boost::ref(app),boost::ref(driver_gui)));
@@ -452,6 +448,7 @@ int main(int argc, char* argv[]) {
         double lat_acc_CG = lat_acc_GC_filter.Add(acc_CG.y());
         double fwd_acc_driver = fwd_acc_driver_filter.Add(acc_driver.x());
         double lat_acc_driver = lat_acc_driver_filter.Add(acc_driver.y());
+
 
         // End simulation
         if (time >= t_end)

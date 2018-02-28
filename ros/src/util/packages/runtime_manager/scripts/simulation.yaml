@@ -26,7 +26,7 @@ buttons:
     gui :
       flags : [ kill_children ]
 
-  chrono :
+  chrono_path :
     run : devel/lib/ros_chrono/hmmwv_model
     gui :
       flags : [ kill_children ]

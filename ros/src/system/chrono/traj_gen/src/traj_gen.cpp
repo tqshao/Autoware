@@ -7,6 +7,8 @@
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
+
+
 int main(int argc, char **argv)
 {
   /**
@@ -59,7 +61,8 @@ int main(int argc, char **argv)
 
 
     traj_gen::Control data_out;
-    data_out.x={200 200};
+
+    data_out.x={200 200}; 
     data_out.y={0,50};
     traj_desired_pub.publish(data_out);
 

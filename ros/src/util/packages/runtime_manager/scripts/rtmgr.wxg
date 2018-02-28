@@ -1878,8 +1878,8 @@
                                                 <flag>wxALL</flag>
                                                 <border>4</border>
                                                 <option>0</option>
-                                                <object class="wxToggleButton" name="button_chrono" base="EditToggleButton">
-                                                    <label>Chrono</label>
+                                                <object class="wxToggleButton" name="button_chrono_path" base="EditToggleButton">
+                                                    <label>Chrono_path</label>
                                                     <events>
                                                         <handler event="EVT_TOGGLEBUTTON">OnLaunchKill</handler>
                                                     </events>

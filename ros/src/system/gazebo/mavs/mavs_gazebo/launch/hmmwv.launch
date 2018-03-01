@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- teliop TODO make make it possible to initialize with other config files for vehicle and obstacle position-->
+  <!-- TODO fix gazebo and RViz views on hmmwv -->
+  <!-- TODO fix display issue on the tires -->
+  <!-- TODO add speed of obstacles -->
+  <!-- TODO add speed multiple obstacles -->
+  <!-- TODO use the robot name parametrically in all files-->
+  <!-- TODO add in an option to update the state of the vehicle based off of /state/ parameter-->
+  <!-- TODO add in an option to pause the simulation before it starts -->
+
+  <arg name="name" default="hmmwv"/>
+
+  <!--  ************** Global Parameters ***************  -->
+  <!--param name="/use_sim_time" value="true"/-->
+  <rosparam command="load" file="$(find mavs_gazebo)/config/global_params.yaml" />
+
+  <!-- start gazebo and load the world -->
+  <include file="$(find mavs_gazebo)/launch/world.launch" />
+
+  <!-- spawn obstacles -->
+  <param command="$(find xacro)/xacro --inorder $(find mavs_description)/urdf/obstacles.urdf.xacro " name="obstacles" />
+  <node args="-urdf -param obstacles -model obstacles" name="spawn_obstacles" output="screen" pkg="gazebo_ros" respawn="false" type="spawn_model" />
+
+  <!-- spawn robot into Gazebo -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find mavs_gazebo)/urdf/mavs.urdf.xacro" />
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model hmmwv"/>
+
+  <node name="move" pkg="mavs_gazebo" type="move_hmmwv.jl" output="screen"/>
+
+</launch>

@@ -28,4 +28,26 @@
 
   <node name="move" pkg="mavs_gazebo" type="move_hmmwv.jl" output="screen"/>
 
+
+  <!-- Convert PointCloud2 to PointCloud1 -->
+  <node pkg="point_cloud_converter" name="point_cloud_converter" type="point_cloud_converter_node" >
+    <remap from="points2_in" to="/lidar_points"/>
+    <remap from="points_out" to="/pcl" />
+		<!--
+		<remap from="points2_in" to="velodyne_points"/>
+		<remap from="points_out" to="velodyne_points" />
+		-->
+  </node>
+
+  <arg name="frame_id" default="velodyne_top_link" />
+  <arg name="manager" default="$(arg frame_id)_nodelet_manager" />
+
+  <!-- LiDAR data processing -->
+  <!-- TODO update obstacle detector min max based off of senario, currently this is hardcoded in-->
+  <include file="$(find obstacle_detector)/launch/nodelets_test.launch">
+    <arg name="frame_id" value="$(arg frame_id)" />
+    <arg name="manager" value="$(arg manager)" />
+  </include>
+
 </launch>
+

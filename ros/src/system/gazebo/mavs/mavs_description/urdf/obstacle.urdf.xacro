@@ -3,7 +3,7 @@
 
   <xacro:macro name="obstacle" params="idx">
 
-    <link name="obstacle" type="fixed">
+    <link name="obstacle_${idx}" type="fixed">
 
       <inertial>
         <origin xyz="${x0[idx]} ${y0[idx]} ${length[idx]/2}" rpy="0 0 0"/>

@@ -25,9 +25,18 @@
 
   <!-- spawn obstacles -->
   <group ns="Obstacle1">
-  <param command="$(find xacro)/xacro --inorder $(find mavs_description)/urdf/obstacles.urdf.xacro " name="obstacles" />
-  <node args="-urdf -param obstacles -model obstacles" name="spawn_obstacles" output="screen" pkg="gazebo_ros" respawn="false" type="spawn_model" />
+    <arg name="idx" value="0"/>
+  <param name="obstacles" command="$(find xacro)/xacro --inorder $(find mavs_description)/urdf/obstacles.urdf.xacro idx:=$(arg idx)" />
+  <node args="-urdf -param obstacles -model obstacle_$(arg idx)" name="spawn_obstacles" output="screen" pkg="gazebo_ros" respawn="false" type="spawn_model" />
   </group>
+
+  <group ns="Obstacle2">
+    <arg name="idx" value="1"/>
+  <param name="obstacles" command="$(find xacro)/xacro --inorder $(find mavs_description)/urdf/obstacles.urdf.xacro idx:=$(arg idx)" />
+  <node args="-urdf -param obstacles -model obstacle_$(arg idx)" name="spawn_obstacles" output="screen" pkg="gazebo_ros" respawn="false" type="spawn_model" />
+  </group>
+
+
 
   <node name="move_obstacles" pkg="mavs_gazebo" type="move_obstacles.jl" output="screen"/>
 

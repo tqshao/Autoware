@@ -23,3 +23,9 @@ catkin_package(
   gazebo_ros
   pcl_ros
 )
+
+# T.Q. transform coordinates from vehicle frame to world frame
+add_executable(map_tf_broadcaster src/map_tf_broadcaster.cpp)
+target_link_libraries(map_tf_broadcaster ${catkin_LIBRARIES})
+
+

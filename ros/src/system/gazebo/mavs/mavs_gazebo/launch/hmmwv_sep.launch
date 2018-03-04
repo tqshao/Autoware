@@ -28,7 +28,7 @@
 
   <node name="move" pkg="mavs_gazebo" type="move_hmmwv.jl" output="screen"/>
 
-  <!-- TF Transform Node-->
+    <!-- TF Transform Node-->
   <node pkg="mavs_gazebo" type="map_tf_broadcaster" name="map_tf_broadcaster" args="map" />
 
   <!-- Convert PointCloud2 to PointCloud1 -->
@@ -46,10 +46,7 @@
 
   <!-- LiDAR data processing -->
   <!-- TODO update obstacle detector min max based off of senario, currently this is hardcoded in-->
-  <include file="$(find obstacle_detector)/launch/nodelets_test.launch">
-    <arg name="frame_id" value="$(arg frame_id)" />
-    <arg name="manager" value="$(arg manager)" />
-  </include>
+
 
 </launch>
 

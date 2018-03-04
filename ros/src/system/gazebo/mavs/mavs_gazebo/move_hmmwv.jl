@@ -44,7 +44,8 @@ function loop(set_state,get_state)
         # Define position to move robot
         vehPose = gs_r.pose  # use the current position
         vehPose.position.x = gs_r.pose.position.x
-        vehPose.position.y = gs_r.pose.position.y + 0.1
+	 #T.Q.
+        vehPose.position.y = gs_r.pose.position.y + 0.02
         # TODO allow for functionality to update based off of /state/ parameter
         #roll = 0; pitch = 0; yaw = sp_PSI[t];
         #Q = tf.quaternion_from_euler(roll, pitch, yaw)

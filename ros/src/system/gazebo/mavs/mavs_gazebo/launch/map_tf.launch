@@ -1,0 +1,5 @@
+<launch>
+    <!-- TF Transform Node-->
+    <node pkg="mavs_gazebo" type="map_tf_broadcaster"
+          args="map" name="map_tf_broadcaster" />
+  </launch>

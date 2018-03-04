@@ -9,12 +9,13 @@ import geometry_msgs.msg: Twist
 
 # TODO
 # 1) check to see if model is paused
+# 2) pass config file names
 
 function loop(pub, obs_num)
     loop_rate = Rate(5.0)
 
     #modelName = RobotOS.get_param("obstacle_name")
-    modelName = "obstacle_0"
+    modelName = "obstacle"
 
     RobotOS.set_param("mavs/bool/init_move_obstacles",true)
 
@@ -40,7 +41,7 @@ function main()
     pub = Array{Publisher{Twist}}(obs_num)
 
     for i in 1:obs_num
-        pub[i] = Publisher{Twist}(string("obstacle/cmd_vel_",i-1), queue_size = 10)
+        pub[i] = Publisher{Twist}(string("Obstacle",i,"/cmd_vel"), queue_size = 10)
     end
 
     loop(pub, obs_num)

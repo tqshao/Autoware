@@ -14,13 +14,13 @@
     </link>
 
     <joint name="base_link_joint" type="fixed">
-      <origin xyz="0.0 0 1.25" rpy="0 0 0" />
+      <origin xyz="0.0 0 0.01" rpy="0 0 0" />
       <parent link="base_footprint"/>
-      <child link="obstacle_${idx}" />
+      <child link="obstacle" />
     </joint>
 
 
-    <link name="obstacle_${idx}">
+    <link name="obstacle">
 
       <inertial>
         <origin xyz="${x0[idx]} ${y0[idx]} ${length[idx]/2}" rpy="0 0 0"/>
@@ -48,9 +48,9 @@
     <gazebo>
       <material>Gazebo/Black</material>
       <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
-        <commandTopic>obstacle/cmd_vel_${idx}</commandTopic>
-        <odometryTopic>obstacle/odom_${idx}</odometryTopic>
-        <odometryFrame>obstacle/odom_${idx}</odometryFrame>
+        <commandTopic>cmd_vel</commandTopic>
+        <odometryTopic>odom</odometryTopic>
+        <odometryFrame>odom</odometryFrame>
         <odometryRate>20.0</odometryRate>
         <robotBaseFrame>base_footprint</robotBaseFrame>
       </plugin>

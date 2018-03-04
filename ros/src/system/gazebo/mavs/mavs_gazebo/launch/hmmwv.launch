@@ -11,6 +11,10 @@
   <!-- TODO add in an option to pause the simulation before it starts -->
 
   <arg name="name" default="hmmwv"/>
+
+  <arg name="obstacle_name" default="s1"/>
+
+
   <!--  ************** Global Parameters ***************  -->
   <!--param name="/use_sim_time" value="true"/-->
   <rosparam command="load" file="$(find mavs_gazebo)/config/global_params.yaml" />
@@ -20,8 +24,11 @@
   <include file="$(find mavs_gazebo)/launch/world.launch" />
 
   <!-- spawn obstacles -->
+  <group ns="Obstacle1">
   <param command="$(find xacro)/xacro --inorder $(find mavs_description)/urdf/obstacles.urdf.xacro " name="obstacles" />
   <node args="-urdf -param obstacles -model obstacles" name="spawn_obstacles" output="screen" pkg="gazebo_ros" respawn="false" type="spawn_model" />
+  </group>
+
   <node name="move_obstacles" pkg="mavs_gazebo" type="move_obstacles.jl" output="screen"/>
 
   <!-- spawn robot into Gazebo -->

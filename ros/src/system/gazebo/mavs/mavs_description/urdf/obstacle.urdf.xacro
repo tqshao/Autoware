@@ -3,7 +3,24 @@
 
   <xacro:macro name="obstacle" params="idx">
 
-    <link name="obstacle_${idx}" type="fixed">
+    <!-- root link, on the ground just below the model origin -->
+    <link name="base_footprint">
+     <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.001 0.001 0.001" />
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="base_link_joint" type="fixed">
+      <origin xyz="0.0 0 1.25" rpy="0 0 0" />
+      <parent link="base_footprint"/>
+      <child link="obstacle_${idx}" />
+    </joint>
+
+
+    <link name="obstacle_${idx}">
 
       <inertial>
         <origin xyz="${x0[idx]} ${y0[idx]} ${length[idx]/2}" rpy="0 0 0"/>
@@ -27,11 +44,19 @@
 
     </link>
 
+
     <gazebo>
-      <static>true</static>
       <material>Gazebo/Black</material>
+      <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+        <commandTopic>cmd_vel</commandTopic>
+        <odometryTopic>odom</odometryTopic>
+        <odometryFrame>odom</odometryFrame>
+        <odometryRate>20.0</odometryRate>
+        <robotBaseFrame>base_footprint</robotBaseFrame>
+      </plugin>
     </gazebo>
 
+<!--https://answers.ros.org/question/11506/different-cmd_vel-msgs-to-multiple-robots-on-gazebo/-->
   </xacro:macro>
 
 </robot>

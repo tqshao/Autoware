@@ -1,48 +1,22 @@
 <?xml version="1.0"?>
 <launch>
 
-  <!-- teliop TODO make make it possible to initialize with other config files for vehicle and obstacle position-->
-  <!-- TODO fix gazebo and RViz views on hmmwv -->
-  <!-- TODO fix display issue on the tires -->
-  <!-- TODO add speed of obstacles -->
-  <!-- TODO add speed multiple obstacles -->
-  <!-- TODO use the robot name parametrically in all files-->
-  <!-- TODO add in an option to update the state of the vehicle based off of /state/ parameter-->
-  <!-- TODO add in an option to pause the simulation before it starts -->
-
-  <arg name="name" default="hmmwv"/>
-
-  <arg name="obstacle_name" default="s1"/>
-
+  <arg name="external_update" default="false" doc="option to update the state of the vehicle based off of /state/ parameter"/>
+  <arg name="vehicle_name" default="hmmwv"/>
+  <arg name="global_params_file" default="$(find mavs_gazebo)/config/global_params.yaml"/>
+  <arg name="vehicle_params_file" default="$(find mavs_gazebo)/config/mavs_params.yaml"/>
+  <arg name="obstacle_num" default="3"/>
 
   <!--  ************** Global Parameters ***************  -->
   <!--param name="/use_sim_time" value="true"/-->
-  <rosparam command="load" file="$(find mavs_gazebo)/config/global_params.yaml" />
-  <rosparam command="load" file="$(find mavs_gazebo)/config/mavs_params.yaml" />
+  <rosparam command="load" file="$(arg global_params_file)" />
+  <rosparam command="load" file="$(arg vehicle_params_file)" />
 
   <!-- start gazebo and load the world -->
   <include file="$(find mavs_gazebo)/launch/world.launch" />
 
-  <!-- spawn obstacles -->
-  <group ns="Obstacle1">
-    <arg name="idx" value="0"/>
-  <param name="obstacles" command="$(find xacro)/xacro --inorder $(find mavs_description)/urdf/obstacles.urdf.xacro idx:=$(arg idx)" />
-  <node args="-urdf -param obstacles -model obstacle_$(arg idx)" name="spawn_obstacles" output="screen" pkg="gazebo_ros" respawn="false" type="spawn_model" />
-  </group>
-
-  <group ns="Obstacle2">
-    <arg name="idx" value="1"/>
-  <param name="obstacles" command="$(find xacro)/xacro --inorder $(find mavs_description)/urdf/obstacles.urdf.xacro idx:=$(arg idx)" />
-  <node args="-urdf -param obstacles -model obstacle_$(arg idx)" name="spawn_obstacles" output="screen" pkg="gazebo_ros" respawn="false" type="spawn_model" />
-  </group>
-
-
-
-  <node name="move_obstacles" pkg="mavs_gazebo" type="move_obstacles.jl" output="screen"/>
-
   <!-- spawn robot into Gazebo -->
   <param name="robot_description" command="$(find xacro)/xacro --inorder $(find mavs_gazebo)/urdf/mavs.urdf.xacro" />
-  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model hmmwv"/>
-  <node name="move_hmmwv" pkg="mavs_gazebo" type="move_hmmwv.jl" output="screen"/>
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model $(arg vehicle_name)"/>
 
 </launch>

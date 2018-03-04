@@ -25,7 +25,7 @@
   <xacro:property name="psi0" value="${mavs['mavs']['X0']['psi']}" />
 
   <xacro:property name="scale_factor" value="${vehicle['scale_factor']}" />
-  <xacro:property name="mesh_mode" value="1"/>
+  <xacro:property name="mesh_mode" value="${vehicle['mesh_mode']}"/>
 
   <!-- Vehicle geometry -->
   <xacro:property name="base_link" value="${vehicle['base_link']}" />

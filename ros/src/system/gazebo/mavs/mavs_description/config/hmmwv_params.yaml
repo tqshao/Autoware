@@ -1,5 +1,6 @@
 # mesh parameters
 scale_factor: 0.2
+mesh_mode: 1
 
 # vehicle geometry
 base_link: base_link

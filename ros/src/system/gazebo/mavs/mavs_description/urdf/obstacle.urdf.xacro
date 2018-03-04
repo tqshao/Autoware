@@ -14,7 +14,7 @@
     </link>
 
     <joint name="base_link_joint" type="fixed">
-      <origin xyz="0.0 0 0.01" rpy="0 0 0" />
+      <origin xyz="0.0 0 0" rpy="0 0 0" />
       <parent link="base_footprint"/>
       <child link="obstacle" />
     </joint>
@@ -24,7 +24,7 @@
 
       <inertial>
         <origin xyz="${x0[idx]} ${y0[idx]} ${length[idx]/2}" rpy="0 0 0"/>
-        <mass value="1.0" />
+        <mass value="100.0" />
         <inertia  ixx="0.0" ixy="0.0"  ixz="0.0"  iyy="0.0"  iyz="0.0"  izz="0.0" />
       </inertial>
 

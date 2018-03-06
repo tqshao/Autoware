@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- teliop TODO make make it possible to initialize with other config files for vehicle and obstacle position-->
+  <!-- TODO fix gazebo and RViz views on hmmwv -->
+  <!-- TODO fix display issue on the tires -->
+  <!-- TODO add in an option to pause the simulation before it starts -->
+
+  <arg name="external_update" default="false" doc="option to update the state of the vehicle based off of /state/ parameter"/>
+  <arg name="vehicle_name" default="hmmwv"/>
+  <arg name="global_params_file" default="$(find mavs_gazebo)/config/global_params.yaml"/>
+  <arg name="vehicle_params_file" default="$(find mavs_gazebo)/config/mavs_params.yaml"/>
+  <arg name="obstacle_num" default="3"/>
+
+
+ <param name="mavs/flags/external_update" value="$(arg external_update)"/>
+
+  <!--  ************** Global Parameters ***************  -->
+  <!--param name="/use_sim_time" value="true"/-->
+  <rosparam command="load" file="$(arg global_params_file)" />
+  <rosparam command="load" file="$(arg vehicle_params_file)" />
+
+
+  <!-- start gazebo and load the world -->
+  <include file="$(find mavs_gazebo)/launch/world.launch" />
+
+  <!-- launch obstacles and make them move -->
+  <include file="$(find mavs_gazebo)/launch/obstacles.launch">
+      <arg name="obstacle_num" value="$(arg obstacle_num)"/>
+  </include>
+  <node name="move_obstacles" pkg="mavs_gazebo" type="move_obstacles.jl" output="screen"/>
+
+  <!-- spawn robot into Gazebo -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find mavs_gazebo)/urdf/mavs.urdf.xacro" />
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model $(arg vehicle_name)"/>
+  <node name="move_hmmwv" pkg="mavs_gazebo" type="move_hmmwv.jl" output="screen"/>
+
+  <!-- TF Transform Node-->
+  <node pkg="mavs_gazebo" type="map_tf_broadcaster" name="map_tf_broadcaster" args="map" />
+
+  <!-- Convert PointCloud2 to PointCloud1 -->
+  <node pkg="point_cloud_converter" name="point_cloud_converter" type="point_cloud_converter_node" >
+    <remap from="points2_in" to="/lidar_points"/>
+    <remap from="points_out" to="/pcl" />
+		<!--
+		<remap from="points2_in" to="velodyne_points"/>
+		<remap from="points_out" to="velodyne_points" />
+		-->
+  </node>
+
+  <arg name="frame_id" default="velodyne_top_link" />
+  <arg name="manager" default="$(arg frame_id)_nodelet_manager" />
+
+  <!-- LiDAR data processing -->
+  <!-- TODO update obstacle detector min max based off of senario, currently this is hardcoded in-->
+  <include file="$(find obstacle_detector)/launch/nodelets_test.launch">
+    <arg name="frame_id" value="$(arg frame_id)" />
+    <arg name="manager" value="$(arg manager)" />
+  </include>
+
+
+</launch>

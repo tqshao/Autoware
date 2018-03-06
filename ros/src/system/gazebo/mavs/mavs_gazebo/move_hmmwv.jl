@@ -4,8 +4,6 @@ using RobotOS
 @rosimport geometry_msgs.msg: Point, Pose, Pose2D, PoseStamped, Vector3
 @rosimport std_srvs.srv: Empty, SetBool
 @rosimport nav_msgs.srv.GetPlan
-#@rosimport mavs_control.msg: Control
-
 @rosimport gazebo_msgs.msg: ModelState
 @rosimport gazebo_msgs.srv: SetModelState, GetModelState, GetWorldProperties
 
@@ -15,21 +13,26 @@ using std_srvs.srv
 using nav_msgs.srv.GetPlan
 using gazebo_msgs.msg
 using gazebo_msgs.srv
-#using mavs_control.msg
 using PyCall
 @pyimport tf.transformations as tf
-#using VehicleModels # for Linear_Spline()
 
 # TODO
 # 1) check to see if model is paused
-# 2) make a while loop that publishes the current message until there is a new one ready or the current one ran out -> in this case stop the vehicle
-# 3) interpolate message in time, is there a while! new message
 
-function loop(set_state,get_state)
+"""
+--------------------------------------------------------------------------------------\n
+Author: Huckleberry Febbo, Graduate Student, University of Michigan
+Date Create: 2/28/2018, Last Modified: 2/28/2018 \n
+--------------------------------------------------------------------------------------\n
+"""
+function loop_straight_line(set_state,get_state)
     loop_rate = Rate(5.0)
 
     modelName = RobotOS.get_param("robotName")
+    robotNamespace = RobotOS.get_param("robotNamespace")
 
+    RobotOS.set_param(string(robotNamespace,"/flags/init_lidar"),true)
+    println("lidar simulation in Gazebo has been initialized")
     while !is_shutdown()
 
         # Get the current position of the Gazebo model
@@ -44,15 +47,7 @@ function loop(set_state,get_state)
         # Define position to move robot
         vehPose = gs_r.pose  # use the current position
         vehPose.position.x = gs_r.pose.position.x
-	 #T.Q.
-        vehPose.position.y = gs_r.pose.position.y + 0.02
-        # TODO allow for functionality to update based off of /state/ parameter
-        #roll = 0; pitch = 0; yaw = sp_PSI[t];
-        #Q = tf.quaternion_from_euler(roll, pitch, yaw)
-        #vehPose.orientation.x = Q[1]
-        #vehPose.orientation.y = Q[2]
-        #vehPose.orientation.z = Q[3]
-        #vehPose.orientation.w = Q[4]
+        vehPose.position.y = gs_r.pose.position.y + 0.1
 
         # Define the robot state
         ms = ModelState()
@@ -62,7 +57,6 @@ function loop(set_state,get_state)
         # Set the state of the Gazebo model
         ss = SetModelStateRequest()
         ss.model_state = ms
-    #    println("Calling 'gazebo/set_model_state' service...")
         ss_r = set_state(ss)
 
         if !ss_r.success
@@ -72,11 +66,58 @@ function loop(set_state,get_state)
     end
 end
 
+"""
+--------------------------------------------------------------------------------------\n
+Author: Huckleberry Febbo, Graduate Student, University of Michigan
+Date Create: 2/28/2018, Last Modified: 2/28/2018 \n
+--------------------------------------------------------------------------------------\n
+"""
+function loop(set_state,get_state)
+    loop_rate = Rate(5.0)
+
+    modelName = RobotOS.get_param("robotName")
+    robotNamespace = RobotOS.get_param("robotNamespace")
+
+    RobotOS.set_param(string(robotNamespace,"/flags/init_lidar"),true)
+    println("lidar simulation in Gazebo has been initialized")
+    while !is_shutdown()
+
+        # Define the robot state
+        ms = ModelState()
+        ms.model_name = modelName
+        ms.pose.position.x = RobotOS.get_param("state/x")
+        ms.pose.position.y = RobotOS.get_param("state/y")
+        Q = tf.quaternion_from_euler(0, 0, RobotOS.get_param("state/psi"))
+        ms.pose.orientation.x = Q[1]
+        ms.pose.orientation.y = Q[2]
+        ms.pose.orientation.z = Q[3]
+        ms.pose.orientation.w = Q[4]
+
+        # Set the state of the Gazebo model
+        ss = SetModelStateRequest()
+        ss.model_state = ms
+        ss_r = set_state(ss)
+
+        if !ss_r.success
+            error(string(" calling /gazebo/set_model_state service: ", ss_r.status_message))
+        end
+        rossleep(loop_rate)
+    end
+end
+
+
+"""
+--------------------------------------------------------------------------------------\n
+Author: Huckleberry Febbo, Graduate Student, University of Michigan
+Date Create: 2/28/2018, Last Modified: 2/28/2018 \n
+--------------------------------------------------------------------------------------\n
+"""
 function main()
     init_node("rosjl_move_hmmwv")
+    robotNamespace = RobotOS.get_param("robotNamespace")
 
-    # for testing functionality drive vehicle in a straight line
-    RobotOS.set_param("mavs/straight_line",true)
+    # indicates if the problem has been initialized
+    RobotOS.set_param(string(robotNamespace,"/flags/init_lidar"),false)
 
     # Set up service to get Gazebo model state
     const get_state = ServiceProxy("/gazebo/get_model_state", GetModelState)
@@ -88,9 +129,11 @@ function main()
     println("Waiting for 'gazebo/set_model_state' service...")
     wait_for_service("gazebo/set_model_state")
 
-#    sub_control = Subscriber{Control}("/state", callback, (get_state, set_state), queue_size = 2)
-
-    loop(set_state,get_state)
+    if !RobotOS.get_param(string(robotNamespace,"/flags/external_update"))
+        loop_straight_line(set_state,get_state)
+    else
+        loop(set_state,get_state)
+    end
 end
 
 if ! isinteractive()

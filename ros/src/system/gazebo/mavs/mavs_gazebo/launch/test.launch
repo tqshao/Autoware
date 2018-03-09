@@ -38,16 +38,6 @@
   <!-- TF Transform Node-->
   <node pkg="mavs_gazebo" type="map_tf_broadcaster" name="map_tf_broadcaster" args="map" />
 
-  <!-- Convert PointCloud2 to PointCloud1 -->
-  <node pkg="point_cloud_converter" name="point_cloud_converter" type="point_cloud_converter_node" >
-    <remap from="points2_in" to="/lidar_points"/>
-    <remap from="points_out" to="/pcl" />
-		<!--
-		<remap from="points2_in" to="velodyne_points"/>
-		<remap from="points_out" to="velodyne_points" />
-		-->
-  </node>
-
   <arg name="frame_id" default="velodyne_top_link" />
   <arg name="manager" default="$(arg frame_id)_nodelet_manager" />
 

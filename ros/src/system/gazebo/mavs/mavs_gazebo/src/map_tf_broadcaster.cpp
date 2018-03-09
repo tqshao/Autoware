@@ -19,7 +19,7 @@ void poseCallback(const gazebo_msgs::ModelStates::ConstPtr& msg){
   tf::Quaternion q(msg->pose[i].orientation.x, msg->pose[i].orientation.y,
                    msg->pose[i].orientation.z, msg->pose[i].orientation.w);
   // normalize the quaternion
-  q.normalize();
+  //q.normalize();
 
   // q.setRPY(0, 0, msg->theta);
   transform.setRotation(q);
